@@ -1,3 +1,16 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
+import { authService } from '../firebase';
 
-export default () => <span>Profile</span>;
+function Profile() {
+    const history = useHistory();
+    const onSignOut = () => {
+        authService.signOut();
+        history.push('/');
+    };
+    return (
+        <button onClick={onSignOut}>Sign Out</button>
+    );
+}
+
+export default Profile;
