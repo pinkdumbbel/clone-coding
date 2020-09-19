@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import Nweet from '../components/Nweet';
 import { dbService } from '../firebase';
 
-function Home() {
+function Home({ userObj }) {
     const collection = 'twitterClone';
     const [nweet, setNweet] = useState('');
     const [nweets, setNweets] = useState([]);
+    const [fileUrl, setFileUrl] = useState(null);
 
-    const dbNweet = () => {
+    /* const dbNweet = () => {
         const data = dbService.collection(collection).get();
         data.then(querySnapShot => querySnapShot.forEach(result => {
             const newObject = {
@@ -16,7 +18,7 @@ function Home() {
             setNweets(prev => [newObject, ...prev]);
         }
         ));
-    };
+    }; */
     const onChange = (e) => {
         setNweet(e.target.value);
     };
@@ -25,20 +27,40 @@ function Home() {
         try {
             await dbService.collection(collection).add({
                 nweet,
-                createAt: Date.now()
+                createAt: Date.now(),
+                creatorID: userObj.uid,
             });
-            dbNweet();
         } catch (e) {
             console.log(e);
         }
         setNweet('');
     };
 
+    const onFileChange = (e) => {
+        const { target: { files } } = e;
+        const theFile = files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(theFile);
+        reader.onloadend = (finishedEvent => {
+            const { currentTarget: { result } } = finishedEvent;
+            setFileUrl(result);
+        });
+    };
+
+    const clearImg = () => {
+        setFileUrl(null);
+    };
+
     useEffect(() => {
-        dbNweet();
+        dbService.collection(collection).onSnapshot(snapshot => {
+            const nweetArray = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setNweets(nweetArray);
+        });
     }, []);
 
-    console.log(nweets);
     return (
         <div>
             <form onSubmit={onSubmit}>
@@ -50,15 +72,31 @@ function Home() {
                     value={nweet}
                 />
                 <input
+                    type='file'
+                    accept='image/*'
+                    onChange={onFileChange}
+                />
+                <input
                     type='submit'
                     value='Nweet'
                 />
             </form>
-            <div>
-                {
-                    nweets.map(nweet => <h3 key={nweet.id}>{nweet.nweet}</h3>)
-                }
-            </div>
+            {
+                fileUrl && (
+                    <div>
+                        <img src={fileUrl} alt="" width="50px" height="50px" />
+                        <button onClick={clearImg}>Celar</button>
+                    </div>
+                )
+            }
+            {
+                nweets.map(nweet =>
+                    <Nweet
+                        key={nweet.id}
+                        nweet={nweet}
+                        isOwned={nweet.creatorID === userObj.uid ? true : false}
+                    />)
+            }
         </div>
     );
 }
