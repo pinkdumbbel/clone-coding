@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Nweet from '../components/Nweet';
-import { dbService } from '../firebase';
+import { v4 as uuidv4 } from 'uuid';
+import { dbService, storageService } from '../firebase';
 
 function Home({ userObj }) {
     const collection = 'twitterClone';
@@ -25,10 +26,18 @@ function Home({ userObj }) {
     const onSubmit = async (e) => {
         e.preventDefault();
         try {
+            let dataUrl = "";
+            if (fileUrl) {
+                const ref = storageService.ref().child(`${userObj.uid}/${uuidv4()}`);
+                const response = await ref.putString(fileUrl, 'data_url');
+                dataUrl = await response.ref.getDownloadURL();
+                setFileUrl(null);
+            }
             await dbService.collection(collection).add({
                 nweet,
                 createAt: Date.now(),
                 creatorID: userObj.uid,
+                dataUrl,
             });
         } catch (e) {
             console.log(e);
@@ -60,6 +69,8 @@ function Home({ userObj }) {
             setNweets(nweetArray);
         });
     }, []);
+
+    console.log(nweets);
 
     return (
         <div>
