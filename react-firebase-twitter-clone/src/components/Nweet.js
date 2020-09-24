@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { dbService, storageService } from '../firebase';
 
 function Nweet({ nweet, isOwned }) {
-    console.log(nweet);
-
     const collection = 'twitterClone';
 
     const [edit, setEdit] = useState(false);

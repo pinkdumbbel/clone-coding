@@ -70,8 +70,6 @@ function Home({ userObj }) {
         });
     }, []);
 
-    console.log(nweets);
-
     return (
         <div>
             <form onSubmit={onSubmit}>
