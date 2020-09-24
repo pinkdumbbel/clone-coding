@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { authService, dbService, storageService } from '../firebase';
+import { authService, storageService } from '../firebase';
 
 function Profile({ userObj }) {
-    useEffect(() => {
-        console.log('12313123213');
-    });
-    //const collection = 'twitterClone';
-    const history = useHistory();
+    //새로고침시 user정보가 없어지는 현상에 대한 방지
+    if (userObj === null) userObj = authService.currentUser;
+
     const [NewDisplayName, setNewDisplayName] = useState(userObj.displayName);
     const [fileUrl, setFileUrl] = useState(null);
-    //const [prevFileUrl, setPrevFileUrl] = useState('');
+    const history = useHistory();
+
     const onSignOut = () => {
         authService.signOut();
         history.push('/');
@@ -24,6 +23,11 @@ function Profile({ userObj }) {
     const onSubmit = async (e) => {
         e.preventDefault();
         let dataUrl = '';
+
+        if (NewDisplayName === '') {
+            alert('변경하실 이름을 입력해 주세요.');
+            return false;
+        }
 
         if (
             userObj.displayName !== NewDisplayName ||
@@ -58,13 +62,6 @@ function Profile({ userObj }) {
         });
     };
 
-    /* const getUser = async () => {
-        const db = await dbService.collection(collection)
-            .where('creatorID', '==', userObj.uid)
-            .orderBy('createAt');
-        db.get().then(result => console.log(result.docs.map(doc => doc.data())));
-    };
-    */
     return (
         <>
             {
