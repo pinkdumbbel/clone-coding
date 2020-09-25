@@ -5,11 +5,12 @@ import { authService } from "../firebase";
 function App() {
   const [init, setInit] = useState(false);
   const [userObj, setUserObj] = useState(null);
+
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
         setUserObj({
-          displayName: user.displayName,
+          displayName: (user.displayName) ? user.displayName : 'escapew',
           uid: user.uid,
           updateProfile: (args) => user.updateProfile(args),
           photoURL: user.photoURL,
@@ -30,6 +31,7 @@ function App() {
       photoURL: user.photoURL
     });
   };
+
   return (
     <>
       {init ? (

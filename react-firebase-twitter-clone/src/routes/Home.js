@@ -1,74 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Nweet from '../components/Nweet';
-import { v4 as uuidv4 } from 'uuid';
-import { dbService, storageService } from '../firebase';
+import React from 'react';
+import Nweet from '../Components/Nweet';
 
-function Home({ userObj }) {
-    const collection = 'twitterClone';
-    const [nweet, setNweet] = useState('');
-    const [nweets, setNweets] = useState([]);
-    const [fileUrl, setFileUrl] = useState(null);
+function Home({ homeProps }) {
 
-    /* const dbNweet = () => {
-        const data = dbService.collection(collection).get();
-        data.then(querySnapShot => querySnapShot.forEach(result => {
-            const newObject = {
-                ...result.data(),
-                id: result.id
-            };
-            setNweets(prev => [newObject, ...prev]);
-        }
-        ));
-    }; */
-    const onChange = (e) => {
-        setNweet(e.target.value);
-    };
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            let dataUrl = "";
-            if (fileUrl) {
-                const ref = storageService.ref().child(`${userObj.uid}/${uuidv4()}`);
-                const response = await ref.putString(fileUrl, 'data_url');
-                dataUrl = await response.ref.getDownloadURL();
-                setFileUrl(null);
-            }
-            await dbService.collection(collection).add({
-                nweet,
-                createAt: Date.now(),
-                creatorID: userObj.uid,
-                dataUrl,
-            });
-        } catch (e) {
-            console.log(e);
-        }
-        setNweet('');
-    };
-
-    const onFileChange = (e) => {
-        const { target: { files } } = e;
-        const theFile = files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(theFile);
-        reader.onloadend = (finishedEvent => {
-            const { currentTarget: { result } } = finishedEvent;
-            setFileUrl(result);
-        });
-    };
-
-    const clearImg = () => {
-        setFileUrl(null);
-    };
-
-    useEffect(() => {
-        dbService.collection(collection).onSnapshot(snapshot => {
-            const nweetArray = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setNweets(nweetArray);
-        });
-    }, []);
+    const { userObj, onChange, onSubmit, onFileChange, clearImg, nweets, nweet, fileUrl } = homeProps;
 
     return (
         <div>

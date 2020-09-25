@@ -3,8 +3,6 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
 
-console.log(`API_KEY => ${process.env.REACT_APP_API_KEY}`);
-
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
