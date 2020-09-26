@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { dbService, storageService } from '../firebase';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
 function Nweet({ nweet, isOwned }) {
     const collection = 'twitterClone';
@@ -7,7 +9,7 @@ function Nweet({ nweet, isOwned }) {
     const [edit, setEdit] = useState(false);
     const [text, setText] = useState('');
 
-    const onDleteClick = async () => {
+    const onDeleteClick = async () => {
         const ok = window.confirm('정말 삭제 하시겠습니까?');
         if (ok) {
             //삭제 컬렉션 doc가 먼저 삭제되면 url을 읽을수 없으므로 파일 먼저 삭제
@@ -36,27 +38,39 @@ function Nweet({ nweet, isOwned }) {
 
     };
     return (
-        <div>
+        <div className="nweet">
             {
                 (edit) ? (
                     <>
-                        <form onSubmit={onEditSubmit}>
+                        <form onSubmit={onEditSubmit} className="container nweetEdit">
                             <input
                                 type='text'
+                                placeholder="Edit your nweet"
                                 value={text}
                                 onChange={onChange}
+                                autoFocus
+                                className="formInput"
                             />
+                            <input type="submit" value="Update Nweet" className="formBtn" />
                         </form>
-                        <button onClick={onEditClick}>cancel</button>
+                        <span onClick={onEditClick} className="formBtn cancelBtn">
+                            Cancel
+                        </span>
                     </>) :
                     (
                         <>
                             <h3>{nweet.nweet}</h3>
-                            {nweet.dataUrl && <img src={nweet.dataUrl} alt="" width="50px" height="50px" />}
+                            {nweet.dataUrl && <img src={nweet.dataUrl} alt="" />}
                             {isOwned && (
                                 <>
-                                    <button onClick={onEditClick}>edit</button>
-                                    <button onClick={onDleteClick}>delete</button>
+                                    <div class="nweet__actions">
+                                        <span onClick={onDeleteClick}>
+                                            <FontAwesomeIcon icon={faTrash} />
+                                        </span>
+                                        <span onClick={onEditClick}>
+                                            <FontAwesomeIcon icon={faPencilAlt} />
+                                        </span>
+                                    </div>
                                 </>
                             )}
                         </>)
