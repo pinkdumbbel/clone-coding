@@ -8,7 +8,7 @@ function Navigation({ userObj }) {
 
     return (
         <nav>
-            <ul>
+            <ul style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
                 <li>
                     <Link to="/" style={{ marginRight: 10 }}>
                         <FontAwesomeIcon icon={faTwitter} color={"#04AAFF"} size="2x" />

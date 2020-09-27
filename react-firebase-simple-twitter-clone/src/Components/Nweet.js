@@ -63,7 +63,7 @@ function Nweet({ nweet, isOwned }) {
                             {nweet.dataUrl && <img src={nweet.dataUrl} alt="" />}
                             {isOwned && (
                                 <>
-                                    <div class="nweet__actions">
+                                    <div className="nweet__actions">
                                         <span onClick={onDeleteClick}>
                                             <FontAwesomeIcon icon={faTrash} />
                                         </span>

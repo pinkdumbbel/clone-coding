@@ -12,26 +12,28 @@ const AppRouter = ({ isLoggedIn, userObj, refreshUser }) => {
         <Router>
             {isLoggedIn && <Navigation userObj={userObj} />}
             <Switch>
-                {
-                    isLoggedIn ?
-                        (
-                            <div
-                                style={{
-                                    maxWidth: 890,
-                                    width: "100%",
-                                    margin: "0 auto",
-                                    marginTop: 80,
-                                    display: "flex",
-                                    justifyContent: "center",
-                                }}
-                            >
-                                <Route exact path='/'><HomeContainer userObj={userObj} /></Route>
-                                <Route exact path='/Profile'><ProfileContainer userObj={userObj} refreshUser={refreshUser} /></Route>
-                            </div>
-                        )
-                        :
-                        <Route exact path='/'><AuthContainer /></Route>
-                }
+                <>
+                    {
+                        isLoggedIn ?
+                            (
+                                <div
+                                    style={{
+                                        maxWidth: 890,
+                                        width: "100%",
+                                        margin: "0 auto",
+                                        marginTop: 80,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <Route exact path='/'><HomeContainer userObj={userObj} /></Route>
+                                    <Route exact path='/Profile'><ProfileContainer userObj={userObj} refreshUser={refreshUser} /></Route>
+                                </div>
+                            )
+                            :
+                            <Route exact path='/'><AuthContainer /></Route>
+                    }
+                </>
             </Switch>
         </Router>
     );
