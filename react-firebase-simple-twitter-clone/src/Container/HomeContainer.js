@@ -7,7 +7,7 @@ function HomeContainer({ userObj }) {
     const [nweets, setNweets] = useState([]);
     const [fileUrl, setFileUrl] = useState(null);
 
-    const homeProps = propsCreateFn(userObj, setNweet, setNweets, fileUrl, setFileUrl, nweet, nweets);
+    let homeProps = propsCreateFn(userObj, setNweet, setNweets, fileUrl, setFileUrl, nweet, nweets);
 
 
     useEffect(() => {
