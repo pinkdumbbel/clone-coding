@@ -1,0 +1,77 @@
+.header {
+  width: 100%;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  background: white;
+  z-index: 100;
+  top: 0;
+  box-shadow: 0px 5px 8px -9px rgba(0, 0, 0, 0.75);
+  box-sizing: border-box;
+}
+
+/* LEFT HEADER */
+.header__left {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.header__input {
+  display: flex;
+  align-items: center;
+  background: #eff2f5;
+  padding: 10px;
+  margin-left: 10px;
+  border-radius: 999px;
+  width: 240px;
+  height: 22px;
+}
+
+.header__input > input {
+  border: none;
+  background: transparent;
+  outline: none;
+}
+.header__left > img {
+  height: 40px;
+}
+
+/* MIDDLE HEADER */
+.header__middle {
+  display: flex;
+  justify-content: center;
+}
+
+.header__option {
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+  margin-left: 10px;
+  cursor: pointer;
+  height: 50px;
+}
+.header__option:hover {
+  background: #f1f3f5;
+  border-radius: 10px;
+  align-items: center;
+  padding: 0 30px;
+}
+.header__option > .MuiSvgIcon-root {
+  color: gray;
+}
+
+/* RIGHT HEADER */
+.header__right {
+  display: flex;
+}
+
+.header__info {
+  display: flex;
+  align-items: center;
+}
+
+.header__info > h4 {
+  margin-left: 10px;
+}
