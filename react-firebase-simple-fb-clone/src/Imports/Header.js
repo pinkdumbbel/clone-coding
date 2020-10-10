@@ -1,0 +1,12 @@
+import SearchIcon from '@material-ui/icons/Search';
+import HomeIcon from '@material-ui/icons/Home';
+import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
+import OndemandVideoIcon from '@material-ui/icons/OndemandVideo';
+import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
+import GamesIcon from '@material-ui/icons/Games';
+import { makeStyles } from '@material-ui/core/styles';
+import { Avatar } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';

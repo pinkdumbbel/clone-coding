@@ -1,6 +1,7 @@
 .header {
   width: 100%;
-  padding: 10px 20px;
+  height: 65px;
+  padding: 5px 20px;
   display: flex;
   justify-content: space-between;
   position: fixed;
@@ -65,13 +66,39 @@
 /* RIGHT HEADER */
 .header__right {
   display: flex;
+  align-items: center;
 }
 
 .header__info {
   display: flex;
   align-items: center;
+  padding: 0 5px;
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 .header__info > h4 {
-  margin-left: 10px;
+  margin-left: 5px;
+}
+
+.heder__info__account {
+  paddig: 10px 0px;
+}
+
+.heder__info__account:hover {
+  background: #e9ecef;
+  border-radius: 20px;
+}
+
+.header__info__option {
+  display: flex;
+  justify-content: center;
+  width: 30px;
+  height: 40px;
+  background: #e9ecef;
+  border-radius: 100px;
+}
+
+.header__info__option:hover {
+  background: #ced4da;
 }

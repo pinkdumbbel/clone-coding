@@ -1,18 +1,28 @@
 import React from 'react';
-import './Header.css';
+import '../Css/header.css';
 import SearchIcon from '@material-ui/icons/Search';
 import HomeIcon from '@material-ui/icons/Home';
 import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
 import OndemandVideoIcon from '@material-ui/icons/OndemandVideo';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import GamesIcon from '@material-ui/icons/Games';
-import { Avatar, IconButton } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { Avatar } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+const useStyles = makeStyles((theme) => ({
+    small: {
+        width: theme.spacing(4),
+        height: theme.spacing(4),
+    },
+}));
+
 function Header() {
+    const classes = useStyles();
+
     return (
         <div className='header'>
             <div className='header__left'>
@@ -49,25 +59,26 @@ function Header() {
             </div>
 
             <div className='header__right'>
-                <div className='header__info'>
-                    <Avatar />
+                <div className='header__info heder__info__account'>
+                    <Avatar className={classes.small} />
                     <h4>최창열</h4>
                 </div>
-                <IconButton>
-                    <AddIcon fontSize='large' />
-                </IconButton>
 
-                <IconButton>
-                    <ForumOutlinedIcon fontSize='large' />
-                </IconButton>
+                <div className='header__info header__info__option'>
+                    <AddIcon fontSize='small' />
+                </div>
 
-                <IconButton>
-                    <NotificationsActiveIcon fontSize='large' />
-                </IconButton>
+                <div className='header__info header__info__option'>
+                    <ForumOutlinedIcon fontSize='small' />
+                </div>
 
-                <IconButton>
-                    <ExpandMoreIcon fontSize='large' />
-                </IconButton>
+                <div className='header__info header__info__option'>
+                    <NotificationsActiveIcon fontSize='small' />
+                </div>
+
+                <div className='header__info header__info__option'>
+                    <ExpandMoreIcon fontSize='small' />
+                </div>
 
             </div>
         </div>

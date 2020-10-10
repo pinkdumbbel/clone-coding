@@ -28,6 +28,7 @@
     "firebase": "^7.22.1",
     "html-webpack-plugin": "^4.5.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "styled-components": "^5.2.0"
   }
 }
