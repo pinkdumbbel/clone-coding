@@ -1,0 +1,52 @@
+.sidebar {
+  padding-top: 10px;
+  padding-left: 10px;
+  width: 280px;
+}
+
+.sidebarRow {
+  height: 50px;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.sidebarRow:hover {
+  background: #dee2e6;
+  border-radius: 7px;
+}
+
+.sidebarRow__img > img {
+  width: 40px;
+  height: 40px;
+}
+
+.sidebarRow__title {
+  margin-left: 10px;
+}
+
+.sidebar__moreLoading {
+  padding-left: 10px;
+  width: 100%;
+  display: flex;
+}
+
+.sidebar__moreIcon {
+  background: #e9ecef;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50px;
+}
+
+.sidebar__moreText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  cursor: pointer;
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import './Css/styles.css';
+import './Css/Styles.css';
 import firebase from './firebase';
 
 ReactDOM.render(
