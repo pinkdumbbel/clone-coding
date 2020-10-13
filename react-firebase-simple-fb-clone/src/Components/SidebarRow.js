@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import '../Css/SidebarRow.css';
+import React from 'react';
+
 import { Avatar, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({

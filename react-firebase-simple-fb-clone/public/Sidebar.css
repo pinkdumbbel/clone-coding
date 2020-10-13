@@ -1,8 +1,7 @@
 .sidebar {
-  padding-top: 10px;
-  padding-left: 10px;
-  width: 280px;
-  height: 842px;
+  padding-top: 5px;
+  padding-left: 5px;
+  width: 300px;
 }
 
 .sidebarRow {
@@ -24,6 +23,16 @@
   height: 40px;
 }
 
+.MuiAvatar-root,
+svg {
+  width: 40px;
+  height: 40px;
+}
+
+.MuiAvatar-root {
+  background: #ced4da;
+  border-radius: 50px;
+}
 .sidebarRow__title {
   margin-left: 10px;
 }
