@@ -1,26 +1,48 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from './styles';
 
 function SignUp(){
-    const onSubmit = () => null;
-    const email = '';
-    const onChangeEmail = () => null;
-    const nickname = '';
-    const onChangeNickname = () => null;
-    const password = '';
-    const onChangePassword = () => null;
-    const passwordCheck = '';
-    const onChangePasswordCheck = () => null;
-    const mismatchError = '';
+    const [email, setEmail] = useState('');
+    const [nickname, setNickname] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordCheck, setPasswordCheck] = useState('');
+    const [mismatchError, setMismatchError] = useState(false);
+    const [signUpSuccess, setSignUpSuccess] = useState(false);
     const signUpError = '';
-    const signUpSuccess = '';
+
+    useEffect(() => {
+      if(password!=='' && passwordCheck!=='') setMismatchError(password!==passwordCheck);
+    },[password, passwordCheck]);
+
+    const onChangeEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      setEmail(e.target.value);
+    }, [])
     
+    const onChangeNickname = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setNickname(e.target.value);
+    },[])
+
+    const onChangePassword = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+    },[]);
+    
+    const onChangePasswordCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      setPasswordCheck(e.target.value);
+    },[]);
+
+    const onSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        
+        console.log(email, nickname, password, passwordCheck);
+        setSignUpSuccess(true);
+    },[email, nickname, password, passwordCheck]);
+
     return (
       <div id="container">
         <Header>Sleact</Header>
-        <Form onSubmit={onSubmit}>
-          <Label id="email-label">
+        <Form  onSubmit={onSubmit}>
+           <Label id="email-label">
             <span>이메일 주소</span>
             <div>
               <Input type="email" id="email" name="email" value={email} onChange={onChangeEmail} />
@@ -38,7 +60,7 @@ function SignUp(){
               <Input type="password" id="password" name="password" value={password} onChange={onChangePassword} />
             </div>
           </Label>
-          <Label id="password-check-label">
+           <Label id="password-check-label">
             <span>비밀번호 확인</span>
             <div>
               <Input
@@ -53,7 +75,7 @@ function SignUp(){
             {!nickname && <Error>닉네임을 입력해주세요.</Error>}
             {signUpError && <Error>{signUpError}</Error>}
             {signUpSuccess && <Success>회원가입되었습니다! 로그인해주세요.</Success>}
-          </Label>
+          </Label> 
           <Button type="submit">회원가입</Button>
         </Form>
         <LinkContainer>
