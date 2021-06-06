@@ -5,10 +5,11 @@ type ReturnType<T> = [ T,
                      ]
 
 function inputUser <T>(initialData: T): ReturnType<T> {
-    const [data, setData] = useState(initialData);
+    const [data, setData] = useState<typeof initialData>(initialData);
 
     const handler = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setData((e.target.value as unknown) as T );   
+        const value = (e.target.value as unknown) as T;
+        setData(value);   
     },[]);
 
     return [data, handler];

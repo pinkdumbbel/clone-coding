@@ -81,7 +81,7 @@ const config: webpack.Configuration = {
     contentBase: path.join(__dirname, "public"), // 콘텐츠를 제공할 경로지정
     port: 3090,
     publicPath: '/dist/',
-    /* proxy: {
+    /* proxy: {//front에서 보내는 /api에 대한 주소는 target주소로 바꿔줌
       '/api/': {
         target: 'http://localhost:3095',
         changeOrigin: true,
