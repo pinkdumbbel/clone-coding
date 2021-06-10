@@ -16,7 +16,7 @@
         "@src/*": ["src/*"],
         "@pages/*": ["src/pages/*"],
         "@utils/*": ["src/utils/*"],
-        "@typings/*": ["src/typings/*"]
+        "@typings/*": ["src/types/*"]
       }
     }
   }

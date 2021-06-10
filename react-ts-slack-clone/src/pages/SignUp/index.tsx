@@ -1,10 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from './styles';
 import inputUser from '../../hooks/inputUser';
+import useSWR from 'swr';
+import fetcher from '@src/utils/fetcher';
 
 function SignUp(){
+    const {data} = useSWR('http://localhost:3095/api/users', fetcher);
     const [email, onChangeEmail] =  inputUser('');
     const [nickname, onChangeNickname] = inputUser('');
     const [password, onChangePassword] = inputUser('');
@@ -42,6 +45,9 @@ function SignUp(){
         }
     },[email, nickname, password, passwordCheck, mismatchError]);
 
+    if(data){
+      return <Redirect to='/workspace/sleact/channel/일반' />
+    }
     return (
       <div id="container">
         <Header>Sleact</Header>

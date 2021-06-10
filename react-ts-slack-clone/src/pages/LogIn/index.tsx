@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import fetcher from '../../utils/fetcher';
 
 function LogIn() {
-    const {data,error,revalidate,mutate} = useSWR('http://localhost:3095/api/users', fetcher);
+    const {data, mutate} = useSWR('http://localhost:3095/api/users', fetcher);
     const [email, onChangeEmail] = inputUser('');
     const [password, onChangePassword] = inputUser('');
     const [logInError, setLogInError] = useState(false);
@@ -43,7 +43,7 @@ function LogIn() {
     }
 
     if(data){
-      return <Redirect to="/workspace/channel" />
+      return <Redirect to="/workspace/sleact/channel/일반" />
     }
 
     return ( 

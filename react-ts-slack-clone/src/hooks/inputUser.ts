@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
 type ReturnType<T> = [ T, 
                        (e: React.ChangeEvent<HTMLInputElement>) => void,
+                       Dispatch<SetStateAction<T>>
                      ]
 
 function inputUser <T>(initialData: T): ReturnType<T> {
@@ -12,7 +13,7 @@ function inputUser <T>(initialData: T): ReturnType<T> {
         setData(value);   
     },[]);
 
-    return [data, handler];
+    return [data, handler, setData];
 }
 
 export default inputUser;
