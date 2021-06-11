@@ -9,16 +9,16 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 const config: webpack.Configuration = {
   name: 'sleact',
   mode: isDevelopment ? 'development' : 'production',           //개발용 배포용 설정
-  devtool: !isDevelopment ? 'hidden-source-map' : 'eval',       
+  devtool: !isDevelopment ? 'hidden-source-map' : 'eval',
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],        //바벨이 처리할 확장자 목록
     alias: {                                                    //상대경로 간편화
-      '@hooks': path.resolve(__dirname, '/src/hooks'),               
-      '@components': path.resolve(__dirname, '/src/components'),
+      '@hooks': path.resolve(__dirname, 'src/hooks'),
+      '@components': path.resolve(__dirname, 'src/components'),
       '@src': path.resolve(__dirname, 'src'),
-      '@pages': path.resolve(__dirname, '/src/pages'),
-      '@utils': path.resolve(__dirname, '/src/utils'),
-      '@typings': path.resolve(__dirname, '/src/typings'),
+      '@pages': path.resolve(__dirname, 'src/pages'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
+      '@typings': path.resolve(__dirname, 'src/typings'),
     },
   },
   entry: {                                                      //메인파일위치, 파일의 시작점
@@ -43,10 +43,10 @@ const config: webpack.Configuration = {
           ],
           env: {
             development: {
-              plugins: [require.resolve('react-refresh/babel'), 
-                        '@emotion/babel-plugin'
-                      ],
-            }, 
+              plugins: [require.resolve('react-refresh/babel'),
+                '@emotion/babel-plugin'
+              ],
+            },
             production: {
               plugins: ['@emotion'],
             },
@@ -75,19 +75,19 @@ const config: webpack.Configuration = {
     publicPath: '/dist/',
     clean: true,
   },
-  
+
   devServer: {
     historyApiFallback: true, // react router
     contentBase: path.join(__dirname, "public"), // 콘텐츠를 제공할 경로지정
     port: 3090,
     publicPath: '/dist/',
-    /* proxy: {//front에서 보내는 /api에 대한 주소는 target주소로 바꿔줌
+    proxy: {//front에서 보내는 /api에 대한 주소는 target주소로 바꿔줌
       '/api/': {
         target: 'http://localhost:3095',
         changeOrigin: true,
       },
-    }, */
-  } 
+    },
+  }
 };
 
 //개발환경시 사용될 플러그인
@@ -95,7 +95,7 @@ if (isDevelopment && config.plugins) {
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
   config.plugins.push(new ReactRefreshWebpackPlugin());
   //config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'server', openAnalyzer: true }));
-} 
+}
 
 //배포시 사용되는 플러그인 
 /* if (!isDevelopment && config.plugins) {

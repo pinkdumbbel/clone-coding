@@ -5,45 +5,62 @@ import inputUser from '../../hooks/inputUser';
 import axios from 'axios';
 import { useParams } from 'react-router';
 import loadable from '@loadable/component';
+import { toast } from 'react-toastify';
+import useSWR from 'swr';
+import fetcher from '@src/utils/fetcher';
+import { IChannel, IUser } from '@src/types/db';
 
 interface Props {
-    show: boolean;
-    onCloseModal: () => void;
-    setShowCreateChannelModal: Dispatch<SetStateAction<boolean>>;
+  show: boolean;
+  onCloseModal: () => void;
+  setShowCreateChannelModal: (flag: boolean) => void;
 }
-function CreateChannelModal({show, onCloseModal, setShowCreateChannelModal}: Props) {
-    
-    const [newChannel, onChangeNewChannel] = inputUser('');
-    const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
+function CreateChannelModal({ show, onCloseModal, setShowCreateChannelModal }: Props) {
+  const { workspace } = useParams<{ workspace: string }>();
 
-    console.log(workspace);
+  const { data: userData } = useSWR<IUser | false>('/api/users', fetcher)
+  const { revalidate: revalidateChannel } = useSWR<IChannel[]>(
+    userData ? `/api/workspaces/${workspace}/channels` : null,
+    fetcher
+  );
 
-    const onCreateChannel = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+  const [newChannel, onChangeNewChannel, setNewChannel] = inputUser('');
 
-        if(newChannel && !newChannel.trim()){
-            axios.post(`http://localhost:3095/api/workspaces/${workspace}/channels`, {
-                name:newChannel
-            }, {
-                withCredentials: true
-            })
-            .then(res => console.log(res));
-        }
-    },[newChannel]);
+  const onCreateChannel = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    if(!show) return null;
+    if (newChannel) {
 
-    return (
-        <Modal show={show} onCloseModal={onCloseModal}>
-          <form onSubmit={onCreateChannel}>
-            <Label id="channel-label">
-              <span>채널</span>
-              <Input id="channel" value={newChannel} onChange={onChangeNewChannel} />
-            </Label>
-            <Button type="submit">생성하기</Button>
-          </form>
-        </Modal>
-      );
+      axios.post(`/api/workspaces/${workspace}/channels`, {
+        name: newChannel
+      }, {
+        withCredentials: true
+      })
+        .then(() => {
+          setShowCreateChannelModal(false);
+          revalidateChannel();
+          setNewChannel('');
+        })
+        .catch((e) => {
+          console.dir(e);
+          toast.error(e.response.data, { position: 'bottom-center' })
+        });
+    }
+  }, [newChannel]);
+
+  if (!show) return null;
+
+  return (
+    <Modal show={show} onCloseModal={onCloseModal}>
+      <form onSubmit={onCreateChannel}>
+        <Label id="channel-label">
+          <span>채널</span>
+          <Input id="channel" value={newChannel} onChange={onChangeNewChannel} />
+        </Label>
+        <Button type="submit">생성하기</Button>
+      </form>
+    </Modal>
+  );
 }
 
 export default CreateChannelModal;
