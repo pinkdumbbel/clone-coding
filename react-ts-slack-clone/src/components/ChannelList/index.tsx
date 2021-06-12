@@ -34,7 +34,7 @@ function ChannelList() {
                         aria-hidden="true"
                     />
                 </CollapseButton>
-                <span>Channels</span>
+                <span style={{ cursor: 'pointer' }} onClick={toggleChannelCollapse}>Channels</span>
             </h2>
             <div>
                 {!channelCollapse &&

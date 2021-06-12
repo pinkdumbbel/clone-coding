@@ -40,7 +40,7 @@ function DMList() {
                         aria-hidden="true"
                     />
                 </CollapseButton>
-                <span>Direct Messages</span>
+                <span style={{ cursor: 'pointer' }} onClick={toggleChannelCollapse}>Direct Messages</span>
             </h2>
             <div>
                 {!channelCollapse &&
