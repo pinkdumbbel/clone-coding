@@ -31,6 +31,8 @@ import { toast } from 'react-toastify';
 import CreateChannelModal from '../../components/CreateChannelModal';
 import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import InviteChannelModal from '@components/InviteChannelModal';
+import DMList from '@components/DMList';
+import ChannelList from '@components/ChannelList';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
@@ -158,17 +160,14 @@ function Workspace() {
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
-            {
-              channelData?.map((channel) => <div key={channel.id}>{channel.name}</div>)
-            }
-            {/* <ChannelList />
-                <DMList /> */}
+            <ChannelList />
+            <DMList />
           </MenuScroll>
         </Channels>
         <Chats>
           <Switch>
             <Route path="/workspace/:workspace/channel/:channel" component={Channel} />
-            {/* <Route path="/workspace/:workspace/dm/:id" component={DirectMessage} /> */}
+            <Route path="/workspace/:workspace/dm/:id" component={DirectMessage} />
           </Switch>
         </Chats>
       </WorkspaceWrapper>
