@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import useSWR, { mutate } from 'swr';
@@ -33,6 +33,7 @@ import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import InviteChannelModal from '@components/InviteChannelModal';
 import DMList from '@components/DMList';
 import ChannelList from '@components/ChannelList';
+import useSocket from '@hooks/useSocket';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
@@ -44,6 +45,7 @@ function Workspace() {
   const { data: channelData } = useSWR<IChannel[]>(
     userData ? `/api/workspaces/${workspace}/channels` : null,
     fetcher);
+  const [socket, disconnect] = useSocket(workspace);
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
@@ -53,6 +55,21 @@ function Workspace() {
   const [showInviteChannelModal, setShowInviteChannelModal] = useState(false);
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = inputUser('');
   const [newUrl, onChangeNewUrl, setNewUrl] = inputUser('');
+
+  useEffect(() => {
+    if (userData && channelData && socket) {
+      socket.emit('login', {
+        id: userData.id,
+        channels: channelData.map((channel) => {
+          return channel.id;
+        })
+      });
+    }
+  }, [userData, channelData, socket]);
+
+  useEffect(() => {
+    disconnect();
+  }, [workspace]);
 
   const onLogout = () => {
     axios.post('/api/users/logout', null, {
