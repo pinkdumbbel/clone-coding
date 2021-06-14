@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import fetcher from '../../utils/fetcher';
 
 function LogIn() {
-  const { data, mutate } = useSWR('/api/users', fetcher);
+  const { data, revalidate } = useSWR('/api/users', fetcher);
   const [email, onChangeEmail] = inputUser('');
   const [password, onChangePassword] = inputUser('');
   const [logInError, setLogInError] = useState(false);
@@ -29,8 +29,8 @@ function LogIn() {
       );
 
       response
-        .then((res) => {
-          mutate(res.data, false);
+        .then(() => {
+          revalidate();
         })
         .catch(() => {
           setLogInError(true);

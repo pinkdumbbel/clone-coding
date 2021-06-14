@@ -10,22 +10,19 @@ import ChatList from '@components/ChatList';
 import axios from 'axios';
 import inputUser from '@hooks/inputUser';
 import useSocket from '@hooks/useSocket';
+import { OnChangeHandlerFunc } from 'react-mentions';
 //import { toast } from 'react-toastify';
 
 function DirectMessage() {
     const { workspace, id } = useParams<{ workspace: string; id: string }>();
     const userDataUrl = `/api/workspaces/${workspace}/users/${id}`;
-    const chatDataUrl = `/api/workspaces/${workspace}/dms/${id}/chats`;
+    const chatDataUrl = `/api/workspaces/${workspace}/dms/${id}/chats?perPage=20&page=1`;
 
     const { data: userData } = useSWR<IUser>(userDataUrl, fetcher);
-    const [chat, onChangeChat, setChat] = inputUser<string, HTMLTextAreaElement>('');
-    const [chatData, setChatData] = useState<IDM[]>([]);
+    const { data: chatData, revalidate: chatRevalidate } = useSWR<IDM[]>(chatDataUrl, fetcher);
 
-    useEffect(() => {
-        axios.get<IDM[]>(chatDataUrl)
-            .then((res) => setChatData(res.data))
-            .catch((error) => console.log(error))
-    }, [chatData]);
+    const [chat, onChangeChat, setChat] = inputUser<string, OnChangeHandlerFunc>('');
+
 
     const onSubmitForm = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -34,7 +31,9 @@ function DirectMessage() {
             axios.post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
                 content: chat
             })
-                .then((res) => console.log(res))
+                .then(() => {
+                    chatRevalidate();
+                })
                 .catch((error) => console.log(error));
 
         }
