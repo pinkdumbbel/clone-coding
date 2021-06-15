@@ -11,6 +11,7 @@ import axios from 'axios';
 import inputUser from '@hooks/inputUser';
 import useSocket from '@hooks/useSocket';
 import { OnChangeHandlerFunc } from 'react-mentions';
+import makeDateSection from '@src/utils/makeDateSection';
 //import { toast } from 'react-toastify';
 
 function DirectMessage() {
@@ -40,6 +41,8 @@ function DirectMessage() {
         setChat('');
     }, [chat])
 
+    const chatDateSection = makeDateSection(chatData ? [...chatData].reverse() : []);
+
     if (!userData) return null;
 
     return (
@@ -48,7 +51,7 @@ function DirectMessage() {
                 <img src={gravatar.url(userData?.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
                 <span>{userData.nickname}</span>
             </Header>
-            <ChatList chatData={chatData} />
+            <ChatList chatData={chatData} chatDateSection={chatDateSection} />
             <ChatBox chat={chat} onSubmitForm={onSubmitForm} onChangeChat={onChangeChat} placeholder='' />
         </Container>
     )
