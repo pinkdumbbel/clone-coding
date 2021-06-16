@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { ChatArea, Form, MentionsTextarea, Toolbox, SendButton, EachMention } from '@components/ChatBox/styles';
 import autosize from 'autosize';
-import { Mention, MentionProps, OnChangeHandlerFunc, SuggestionDataItem } from 'react-mentions';
+import { Mention, SuggestionDataItem } from 'react-mentions';
 import useSWR from 'swr';
 import { useParams } from 'react-router';
 import fetcher from '@src/utils/fetcher';

@@ -13,8 +13,6 @@ interface Props {
 function Chat({ data }: Props) {
     const { workspace } = useParams<{ workspace: string }>();
 
-    console.log(data);
-
     const user = data.Sender;
 
     const regExp = /@\[(.+?)]\((\d+?)\)|\n/g;

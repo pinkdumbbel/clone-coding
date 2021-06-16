@@ -17,13 +17,6 @@ const useSocket = (workspace?: string): ReturnType => {
         }
     }
 
-    /* const disconnect = useCallback(() => {
-        if (workspace) {
-            sockets[workspace].disconnect();
-            delete sockets[workspace];
-        }
-    }, [workspace]); */
-
     if (!workspace) {
         return [undefined, disconnect];
     }
