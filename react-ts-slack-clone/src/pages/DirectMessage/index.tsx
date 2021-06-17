@@ -12,6 +12,7 @@ import inputUser from '@hooks/inputUser';
 import { OnChangeHandlerFunc } from 'react-mentions';
 import makeDateSection from '@src/utils/makeDateSection';
 import Scrollbars from 'react-custom-scrollbars';
+import useSocket from '@hooks/useSocket';
 //import { toast } from 'react-toastify';
 
 function DirectMessage() {
@@ -26,10 +27,49 @@ function DirectMessage() {
 
     const scrollbarRef = useRef<Scrollbars>(null);
     const [chat, onChangeChat, setChat] = inputUser<string, OnChangeHandlerFunc>('');
+    const [ socket ] = useSocket(workspace);
 
     const isEmpty = chatData?.[0]?.length===0;
     const isReachingEnd = isEmpty || (chatData && chatData[chatData.length-1].length<20) || false;
     
+    /* const onMessage = useCallback((data: IDM) => {
+        if(data.SenderId===Number(id)){
+        chatMutate((prevChatData) => {
+            prevChatData?.[0].unshift(data);   
+            return prevChatData
+        }, false)
+    }
+    }, [])  */
+
+    const onMessage = useCallback((data: IDM) => {
+        // id는 상대방 아이디
+        if (data.SenderId === Number(id) && (myData && myData.id !== Number(id))) {
+            chatMutate((chatData) => {
+            chatData?.[0].unshift(data);
+            return chatData;
+          }, false).then(() => {
+            if (scrollbarRef.current) {
+              if (
+                scrollbarRef.current.getScrollHeight() <
+                scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
+              ) {
+                console.log('scrollToBottom!', scrollbarRef.current?.getValues());
+                setTimeout(() => {
+                  scrollbarRef.current?.scrollToBottom();
+                }, 50);
+              }
+            }
+          });
+        }
+      }, []);
+
+    useEffect(() => {
+        socket?.on('dm', onMessage);
+        return () => {
+            socket?.off('dm', onMessage);
+        };
+    },[socket, onMessage])
+
     //로딩시 스크롤바 제일 아래로
     useEffect(() => {
         if(chatData?.length === 1){
@@ -55,14 +95,17 @@ function DirectMessage() {
                     scrollbarRef.current?.scrollToBottom();
                 }
                 return prevChatData;
-            }, false);
+            }, false)
+            .then(() => {
+                setChat('');
+                scrollbarRef.current?.scrollToBottom();
+            })
             
             axios.post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
                 content: chat
             })
                 .then(() => {
                     chatRevalidate();
-                    
                 })
                 .catch((error) => console.log(error));
 
@@ -72,7 +115,7 @@ function DirectMessage() {
 
     const chatDateSection = makeDateSection(chatData ? [...chatData].flat().reverse() : []);
 
-    if (!userData) return null;
+    if (!userData || !myData) return null;
 
     return (
         <Container>
