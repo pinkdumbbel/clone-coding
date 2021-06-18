@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Container, Header } from '@pages/DirectMessage/styles';
 import gravatar from 'gravatar';
 import useSWR, { useSWRInfinite } from 'swr';
@@ -13,12 +13,11 @@ import { OnChangeHandlerFunc } from 'react-mentions';
 import makeDateSection from '@src/utils/makeDateSection';
 import Scrollbars from 'react-custom-scrollbars';
 import useSocket from '@hooks/useSocket';
-//import { toast } from 'react-toastify';
 
 function DirectMessage() {
     const { workspace, id } = useParams<{ workspace: string; id: string }>();
     const userDataUrl = `/api/workspaces/${workspace}/users/${id}`;
-
+    
     const { data: myData } = useSWR<IUser>('/api/users', fetcher);
     const { data: userData } = useSWR<IUser>(userDataUrl, fetcher);
     const { data: chatData, revalidate: chatRevalidate, mutate: chatMutate, setSize } = useSWRInfinite<IDM[]>(
@@ -31,15 +30,6 @@ function DirectMessage() {
 
     const isEmpty = chatData?.[0]?.length===0;
     const isReachingEnd = isEmpty || (chatData && chatData[chatData.length-1].length<20) || false;
-    
-    /* const onMessage = useCallback((data: IDM) => {
-        if(data.SenderId===Number(id)){
-        chatMutate((prevChatData) => {
-            prevChatData?.[0].unshift(data);   
-            return prevChatData
-        }, false)
-    }
-    }, [])  */
 
     const onMessage = useCallback((data: IDM) => {
         // id는 상대방 아이디

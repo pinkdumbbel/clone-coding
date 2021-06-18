@@ -17,7 +17,7 @@ interface Props {
 
 function ChatBox({ chat, onSubmitForm, onChangeChat, placeholder }: Props) {
     const { workspace, id } = useParams<{ workspace: string; id: string }>();
-    const { data: userData } = useSWR<IUser>(`/api/workspaces/${workspace}/users/${id}`, fetcher);
+    const { data: userData } = useSWR<IUser>(id ? `/api/workspaces/${workspace}/users/${id}` : null, fetcher);
     const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);

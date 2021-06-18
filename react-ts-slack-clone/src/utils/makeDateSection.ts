@@ -1,11 +1,11 @@
-import { IDM } from '@src/types/db';
+import { IChat, IDM } from '@src/types/db';
 import dayjs from 'dayjs';
 
 export interface DateSectionType {
-    [date: string]: IDM[];
+    [date: string]: (IDM | IChat)[];
 }
 
-function makeDateSection(chatData: IDM[]) {
+function makeDateSection(chatData: (IDM | IChat)[]) {
     const dateKeysObj: DateSectionType = {};
 
     chatData.forEach((chat) => {

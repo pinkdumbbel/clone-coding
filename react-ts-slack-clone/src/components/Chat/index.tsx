@@ -1,19 +1,19 @@
 import React, { memo, useMemo } from 'react';
 import { ChatWrapper } from '@components/Chat/styles';
 import gravatar from 'gravatar';
-import { IDM } from '@src/types/db';
+import { IChat, IDM } from '@src/types/db';
 import dayjs from 'dayjs';
 import regexifyString from 'regexify-string';
 import { Link, useParams } from 'react-router-dom';
 
 interface Props {
-    data: IDM;
+    data: IDM | IChat;
 }
 
 function Chat({ data }: Props) {
     const { workspace } = useParams<{ workspace: string }>();
 
-    const user = data.Sender;
+    const user = 'Sender' in data ? data.Sender : data.User;
 
     const regExp = /@\[(.+?)]\((\d+?)\)|\n/g;
 

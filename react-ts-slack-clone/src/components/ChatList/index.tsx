@@ -3,17 +3,17 @@ import { ChatZone, Section, StickyHeader } from '@components/ChatList/styles';
 import Chat from '@components/Chat';
 import { positionValues, Scrollbars } from 'react-custom-scrollbars';
 import { DateSectionType } from '@src/utils/makeDateSection';
-import { IDM } from '@src/types/db';
+import { IChat, IDM } from '@src/types/db';
 
 interface Props {
     chatDateSection: DateSectionType;
-    setSize: (size: number | ((size: number) => number)) => Promise<IDM[][] | undefined>;
+    setSize: (size: number | ((size: number) => number)) => Promise<(IDM | IChat)[][] | undefined>;
     isReachingEnd: boolean;
 
 }
 
-export default forwardRef<Scrollbars, Props>(function ChatList({ chatDateSection, setSize,  isReachingEnd }: Props, scrollRef) {
-
+export default forwardRef<Scrollbars, Props>(function ChatList({ chatDateSection, setSize,  isReachingEnd }: Props, scrollRef){
+    
     const onScroll = useCallback((values: positionValues) => {
         const current = (scrollRef as MutableRefObject<Scrollbars>)?.current;
         if(values.scrollTop===0 && !isReachingEnd){
