@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Container, Header } from '@pages/DirectMessage/styles';
 import gravatar from 'gravatar';
 import useSWR, { useSWRInfinite } from 'swr';
@@ -13,6 +13,7 @@ import { OnChangeHandlerFunc } from 'react-mentions';
 import makeDateSection from '@src/utils/makeDateSection';
 import Scrollbars from 'react-custom-scrollbars';
 import useSocket from '@hooks/useSocket';
+import DragAndDrop from '@components/DragAndDrop';
 
 function DirectMessage() {
     const { workspace, id } = useParams<{ workspace: string; id: string }>();
@@ -52,7 +53,7 @@ function DirectMessage() {
           });
         }
       }, []);
-
+      
     useEffect(() => {
         socket?.on('dm', onMessage);
         return () => {
@@ -119,6 +120,7 @@ function DirectMessage() {
                 setSize={setSize}
                 isReachingEnd={isReachingEnd}
             />
+            <DragAndDrop />
             <ChatBox chat={chat} onSubmitForm={onSubmitForm} onChangeChat={onChangeChat} placeholder='' />
         </Container>
     )

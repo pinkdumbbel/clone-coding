@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { Container, Header } from './styles';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Container, Header, DragOver } from './styles';
 import ChatList from '@components/ChatList';
 import useSWR, { useSWRInfinite } from 'swr';
 import { useParams } from 'react-router';
