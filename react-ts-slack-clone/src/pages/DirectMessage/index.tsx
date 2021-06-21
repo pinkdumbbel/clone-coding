@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { DragEvent, DragEventHandler, useCallback, useEffect, useRef, useState } from 'react';
 import { Container, Header } from '@pages/DirectMessage/styles';
 import gravatar from 'gravatar';
 import useSWR, { useSWRInfinite } from 'swr';
@@ -13,7 +13,7 @@ import { OnChangeHandlerFunc } from 'react-mentions';
 import makeDateSection from '@src/utils/makeDateSection';
 import Scrollbars from 'react-custom-scrollbars';
 import useSocket from '@hooks/useSocket';
-import DragAndDrop from '@components/DragAndDrop';
+import { DragOver } from '../Channel/styles';
 
 function DirectMessage() {
     const { workspace, id } = useParams<{ workspace: string; id: string }>();
@@ -27,6 +27,7 @@ function DirectMessage() {
 
     const scrollbarRef = useRef<Scrollbars>(null);
     const [chat, onChangeChat, setChat] = inputUser<string, OnChangeHandlerFunc>('');
+    const [dragging, setDragging] = useState(false);
     const [ socket ] = useSocket(workspace);
 
     const isEmpty = chatData?.[0]?.length===0;
@@ -53,7 +54,7 @@ function DirectMessage() {
           });
         }
       }, []);
-      
+
     useEffect(() => {
         socket?.on('dm', onMessage);
         return () => {
@@ -106,10 +107,32 @@ function DirectMessage() {
 
     const chatDateSection = makeDateSection(chatData ? [...chatData].flat().reverse() : []);
 
+    const onDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setDragging(true);
+    }, [dragging])
+
+    const onDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        let data = e.dataTransfer;
+        if(data.items){
+            for(let i = 0; i < data.items.length; i++){
+                if(data.items[i].kind === 'file') {
+                    let file = data.items[i].getAsFile();
+                    console.log(file?.name);
+                }
+            }
+        }
+        setDragging(false);
+
+    }, [dragging])
     if (!userData || !myData) return null;
 
     return (
-        <Container>
+        <Container 
+            onDragOver={onDragOver} 
+            onDrop={onDrop}
+        >
             <Header>
                 <img src={gravatar.url(userData?.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
                 <span>{userData.nickname}</span>
@@ -120,7 +143,9 @@ function DirectMessage() {
                 setSize={setSize}
                 isReachingEnd={isReachingEnd}
             />
-            <DragAndDrop />
+            {
+                dragging &&<DragOver>업로드!</DragOver>
+            }
             <ChatBox chat={chat} onSubmitForm={onSubmitForm} onChangeChat={onChangeChat} placeholder='' />
         </Container>
     )
