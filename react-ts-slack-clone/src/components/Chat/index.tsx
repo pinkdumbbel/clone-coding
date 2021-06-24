@@ -10,6 +10,8 @@ interface Props {
     data: IDM | IChat;
 }
 
+const BACK_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3095' : 'https://sleact.nodebird.com';
+
 function Chat({ data }: Props) {
     const { workspace } = useParams<{ workspace: string }>();
 
@@ -45,7 +47,13 @@ function Chat({ data }: Props) {
                     <b>{user.nickname}</b>
                     <span>{dayjs(data.createdAt).format('h:mm A')}</span>
                 </div>
-                <p>{result}</p>
+                <p>
+                    {
+                        data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') ?
+                        <img src={`${BACK_URL}/${data.content}`} style={{ maxHeight: 200 }} /> : 
+                        result
+                    }
+                </p>
             </div>
         </ChatWrapper>
     );

@@ -111,27 +111,44 @@ function DirectMessage() {
         e.preventDefault();
         setDragging(true);
     }, [dragging])
-
+    
     const onDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         let data = e.dataTransfer;
+        const formData = new FormData();
         if(data.items){
             for(let i = 0; i < data.items.length; i++){
                 if(data.items[i].kind === 'file') {
                     let file = data.items[i].getAsFile();
-                    console.log(file?.name);
+                    file ? formData.append('image', file) : null;
                 }
             }
+        }else{
+            for(let i = 0; i< data.files.length; i++){
+                formData.append('image', data.files[i]);
+            }
         }
-        setDragging(false);
 
-    }, [dragging])
+        axios.post(`/api/workspaces/${workspace}/dms/${id}/images`, formData)
+        .then(() => {
+            chatRevalidate();
+            setDragging(false);
+        });
+        
+
+    }, [chatRevalidate, workspace, id])
+
+    const onDragLeave = ((e: DragEvent<HTMLDivElement>) => {
+        if(e.currentTarget.id === 'leave') setDragging(false);
+    });
+
     if (!userData || !myData) return null;
 
     return (
         <Container 
             onDragOver={onDragOver} 
             onDrop={onDrop}
+            
         >
             <Header>
                 <img src={gravatar.url(userData?.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
@@ -144,7 +161,7 @@ function DirectMessage() {
                 isReachingEnd={isReachingEnd}
             />
             {
-                dragging &&<DragOver>업로드!</DragOver>
+                dragging &&<DragOver id='leave' onDragLeave = {onDragLeave}>업로드!</DragOver>
             }
             <ChatBox chat={chat} onSubmitForm={onSubmitForm} onChangeChat={onChangeChat} placeholder='' />
         </Container>
