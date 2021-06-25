@@ -18,7 +18,7 @@ function Chat({ data }: Props) {
     const user = 'Sender' in data ? data.Sender : data.User;
 
     const regExp = /@\[(.+?)]\((\d+?)\)|\n/g;
-
+    
     const result = useMemo(() => regexifyString({
         input: data.content,
         pattern: regExp,

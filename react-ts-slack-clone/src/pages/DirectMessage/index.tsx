@@ -1,4 +1,4 @@
-import React, { DragEvent, DragEventHandler, useCallback, useEffect, useRef, useState } from 'react';
+import React, { DragEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Container, Header } from '@pages/DirectMessage/styles';
 import gravatar from 'gravatar';
 import useSWR, { useSWRInfinite } from 'swr';
@@ -14,6 +14,7 @@ import makeDateSection from '@src/utils/makeDateSection';
 import Scrollbars from 'react-custom-scrollbars';
 import useSocket from '@hooks/useSocket';
 import { DragOver } from '../Channel/styles';
+import FileCheckModal from '@components/FileCheckModal';
 
 function DirectMessage() {
     const { workspace, id } = useParams<{ workspace: string; id: string }>();
@@ -28,8 +29,10 @@ function DirectMessage() {
     const scrollbarRef = useRef<Scrollbars>(null);
     const [chat, onChangeChat, setChat] = inputUser<string, OnChangeHandlerFunc>('');
     const [dragging, setDragging] = useState(false);
+    const [fileCheckModal, setFileCheckModal] = useState(false);
+    const [fileData, setFileData] = useState<FormData>();
     const [ socket ] = useSocket(workspace);
-
+        
     const isEmpty = chatData?.[0]?.length===0;
     const isReachingEnd = isEmpty || (chatData && chatData[chatData.length-1].length<20) || false;
 
@@ -113,7 +116,9 @@ function DirectMessage() {
     }, [dragging])
     
     const onDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
+        e.preventDefault();        
+        setFileCheckModal(true);
+
         let data = e.dataTransfer;
         const formData = new FormData();
         if(data.items){
@@ -128,43 +133,54 @@ function DirectMessage() {
                 formData.append('image', data.files[i]);
             }
         }
-
-        axios.post(`/api/workspaces/${workspace}/dms/${id}/images`, formData)
-        .then(() => {
-            chatRevalidate();
-            setDragging(false);
-        });
-        
-
+        setFileData(formData);
     }, [chatRevalidate, workspace, id])
 
     const onDragLeave = ((e: DragEvent<HTMLDivElement>) => {
         if(e.currentTarget.id === 'leave') setDragging(false);
     });
 
+    const onCloseModal = () => {
+        setFileCheckModal(false);
+        setDragging(false);
+    }
     if (!userData || !myData) return null;
 
     return (
-        <Container 
-            onDragOver={onDragOver} 
-            onDrop={onDrop}
-            
-        >
-            <Header>
-                <img src={gravatar.url(userData?.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
-                <span>{userData.nickname}</span>
-            </Header>
-            <ChatList 
-                chatDateSection={chatDateSection} 
-                ref={scrollbarRef} 
-                setSize={setSize}
-                isReachingEnd={isReachingEnd}
+        <>
+            <Container 
+                onDragOver={onDragOver} 
+                onDrop={onDrop}
+                
+            >
+                <Header>
+                    <img src={gravatar.url(userData?.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
+                    <span>{userData.nickname}</span>
+                </Header>
+                <ChatList 
+                    chatDateSection={chatDateSection} 
+                    ref={scrollbarRef} 
+                    setSize={setSize}
+                    isReachingEnd={isReachingEnd}
+                />
+                {
+                    dragging &&
+                    <DragOver id='leave' onDragLeave = {onDragLeave}>
+                        !업로드
+                    </DragOver>
+                }
+                <ChatBox chat={chat} onSubmitForm={onSubmitForm} onChangeChat={onChangeChat} placeholder='' />
+            </Container>
+
+            <FileCheckModal 
+                show={fileCheckModal}
+                onCloseModal={onCloseModal}
+                setFileCheckModal={setFileCheckModal}
+                setDragging={setDragging}
+                data = {fileData}
+                revalidate = {chatRevalidate}
             />
-            {
-                dragging &&<DragOver id='leave' onDragLeave = {onDragLeave}>업로드!</DragOver>
-            }
-            <ChatBox chat={chat} onSubmitForm={onSubmitForm} onChangeChat={onChangeChat} placeholder='' />
-        </Container>
+        </>
     )
 }
 

@@ -8,7 +8,6 @@ interface Props {
 }
 
 function Modal({children, show, onCloseModal}: Props) {
-
     const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
     };
