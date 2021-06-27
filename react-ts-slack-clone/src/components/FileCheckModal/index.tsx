@@ -11,9 +11,10 @@ interface Props {
     setDragging: (flag: boolean) => void;
     data?: FormData;
     revalidate: () => Promise<boolean>;
+    fileName: string;
 }
 
-function FileCheckModal({show, onCloseModal, setFileCheckModal, setDragging, data, revalidate }: Props) {
+function FileCheckModal({show, onCloseModal, setFileCheckModal, setDragging, data, revalidate, fileName }: Props) {
     const {workspace, id} = useParams<{workspace: string, id: string}>();
 
     const onFileSend = useCallback(() => {
@@ -39,7 +40,7 @@ function FileCheckModal({show, onCloseModal, setFileCheckModal, setDragging, dat
             <h1>보내는 파일</h1>
 
             <FileList>
-                <li><h3>가나다</h3></li>
+                <li><h3>{fileName ? fileName : '보내는 파일이 없습니다.' }</h3></li>
             </FileList>
 
             <FileCheck>

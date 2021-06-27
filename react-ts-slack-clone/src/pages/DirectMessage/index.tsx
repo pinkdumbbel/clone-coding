@@ -31,6 +31,7 @@ function DirectMessage() {
     const [dragging, setDragging] = useState(false);
     const [fileCheckModal, setFileCheckModal] = useState(false);
     const [fileData, setFileData] = useState<FormData>();
+    const [fileName, setFileName] = useState('');
     const [ socket ] = useSocket(workspace);
         
     const isEmpty = chatData?.[0]?.length===0;
@@ -126,6 +127,7 @@ function DirectMessage() {
                 if(data.items[i].kind === 'file') {
                     let file = data.items[i].getAsFile();
                     file ? formData.append('image', file) : null;
+                    file ? setFileName(file.name) : setFileName('');
                 }
             }
         }else{
@@ -179,6 +181,7 @@ function DirectMessage() {
                 setDragging={setDragging}
                 data = {fileData}
                 revalidate = {chatRevalidate}
+                fileName = {fileName}
             />
         </>
     )
