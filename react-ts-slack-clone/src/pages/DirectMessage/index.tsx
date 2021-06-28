@@ -49,7 +49,6 @@ function DirectMessage() {
                 scrollbarRef.current.getScrollHeight() <
                 scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
               ) {
-                console.log('scrollToBottom!', scrollbarRef.current?.getValues());
                 setTimeout(() => {
                   scrollbarRef.current?.scrollToBottom();
                 }, 50);
@@ -73,6 +72,10 @@ function DirectMessage() {
         }
     }, [chatData]);
 
+    useEffect(() => {
+        localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
+    },[workspace, id]);
+
     const onSubmitForm = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -93,17 +96,18 @@ function DirectMessage() {
                 return prevChatData;
             }, false)
             .then(() => {
+                localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
                 setChat('');
-                scrollbarRef.current?.scrollToBottom();
+                if (scrollbarRef.current) scrollbarRef.current.scrollToBottom();
             })
             
             axios.post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
                 content: chat
             })
-                .then(() => {
-                    chatRevalidate();
-                })
-                .catch((error) => console.log(error));
+            .then(() => {
+                chatRevalidate();
+            })
+            .catch((error) => console.log(error));
 
         }
         setChat('');

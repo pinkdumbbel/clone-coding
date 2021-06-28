@@ -19,6 +19,7 @@ function FileCheckModal({show, onCloseModal, setFileCheckModal, setDragging, dat
 
     const onFileSend = useCallback(() => {
         if(data){
+            localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
             axios.post(`/api/workspaces/${workspace}/dms/${id}/images`, data)
             .then(() => {
                 revalidate();

@@ -72,6 +72,10 @@ function Channel() {
         }
     }, [chatData]);
 
+    useEffect(() => {
+        localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
+    }, [workspace, channel])
+
     const onSubmitForm = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -92,6 +96,7 @@ function Channel() {
                 return prevChatData;
             }, false)
             .then(() => {
+                localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
                 setChat('');
                 scrollbarRef.current?.scrollToBottom();
             })

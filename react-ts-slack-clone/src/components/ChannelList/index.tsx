@@ -4,7 +4,7 @@ import { useParams } from 'react-router';
 import useSWR from 'swr';
 import fetcher from '@src/utils/fetcher';
 import { IChannel, IUser } from '@src/types/db';
-import { NavLink } from 'react-router-dom';
+import EachChannel from '@components/EachChannel';
 
 function ChannelList() {
     const { workspace } = useParams<{ workspace: string }>();
@@ -40,13 +40,9 @@ function ChannelList() {
                 {!channelCollapse &&
                     channelData?.map((channel) => {
                         return (
-                            <NavLink
-                                key={channel.name}
-                                activeClassName="selected"
-                                to={`/workspace/${workspace}/channel/${channel.name}`}
-                            >
-                                <span># {channel.name}</span>
-                            </NavLink>
+                            <EachChannel 
+                                channel={channel}
+                            />
                         );
                     })}
             </div>

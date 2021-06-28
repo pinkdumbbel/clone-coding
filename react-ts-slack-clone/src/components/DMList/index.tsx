@@ -4,8 +4,8 @@ import useSWR from 'swr';
 import { IUser, IUserWithOnline } from '@src/types/db';
 import fetcher from '@src/utils/fetcher';
 import { useParams } from 'react-router';
-import { NavLink } from 'react-router-dom';
 import useSocket from '@hooks/useSocket';
+import EachDM from '@components/EachDM';
 
 function DMList() {
     const { workspace } = useParams<{ workspace: string }>();
@@ -26,7 +26,6 @@ function DMList() {
     useEffect(() => {
         if (userData && memberData && socket) {
             socket.on('onlineList', (data: number[]) => {
-                console.log(`data:${data}`);
                 setOnlineList(data);
             });
         }
@@ -57,19 +56,11 @@ function DMList() {
                     memberData?.map((member) => {
                         const isOnline = onlineList.includes(member.id);
                         return (
-                            <NavLink key={member.id} activeClassName="selected" to={`/workspace/${workspace}/dm/${member.id}`}>
-                                <i
-                                    className={`c-icon p-channel_sidebar__presence_icon p-channel_sidebar__presence_icon--dim_enabled c-presence ${isOnline ? 'c-presence--active c-icon--presence-online' : 'c-icon--presence-offline'
-                                        }`}
-                                    aria-hidden="true"
-                                    data-qa="presence_indicator"
-                                    data-qa-presence-self="false"
-                                    data-qa-presence-active="false"
-                                    data-qa-presence-dnd="false"
-                                />
-                                <span>{member.nickname}</span>
-                                {member.id === userData?.id && <span> (나)</span>}
-                            </NavLink>
+                            <EachDM 
+                                key={member.id}
+                                member={member}
+                                isOnline={isOnline}
+                            />
                         );
                     })}
             </div>
