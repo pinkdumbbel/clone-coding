@@ -1,41 +1,49 @@
 import Modal from '@components/Modal';
-import React, { DragEvent, useCallback } from 'react';
+import React, { DragEvent, useCallback, useState } from 'react';
 import {FileCheck, FileList} from '@components/FileCheckModal/styles';
 import axios from 'axios';
 import { useParams } from 'react-router';
+import FileSetting from '@hooks/fileSetting';
 
 interface Props {
     show: boolean;
-    onCloseModal: () => void;
     setFileCheckModal: (flag: boolean) => void;
     setDragging: (flag: boolean) => void;
-    data?: FormData;
+    e?: DragEvent<HTMLDivElement>
     revalidate: () => Promise<boolean>;
-    fileName: string;
+    messageFrom: string
 }
 
-function FileCheckModal({show, onCloseModal, setFileCheckModal, setDragging, data, revalidate, fileName }: Props) {
-    const {workspace, id} = useParams<{workspace: string, id: string}>();
+function FileCheckModal({show, setFileCheckModal, setDragging, e, revalidate, messageFrom}: Props) {
+    const [formData, fileName] = FileSetting(e);
+    const {workspace, channel, id } = useParams<{workspace: string, channel: string, id:string}>();
+    const paramOfMessageFrom = messageFrom==='channels' ? channel : id;
 
     const onFileSend = useCallback(() => {
-        if(data){
-            localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
-            axios.post(`/api/workspaces/${workspace}/dms/${id}/images`, data)
+        if(formData.get('image')) {
+            localStorage.setItem(`${workspace}-${paramOfMessageFrom}`, new Date().getTime().toString());
+            axios.post(`/api/workspaces/${workspace}/${messageFrom}/${paramOfMessageFrom}/images`, formData)
             .then(() => {
+                localStorage.setItem(`${workspace}-${paramOfMessageFrom}`, new Date().getTime().toString());
                 revalidate();
-                setDragging(false);
-            });
+            })
+            .catch((e) => {
+                console.log(e);
+            })
         }
-
         setFileCheckModal(false);
         setDragging(false);
-    },[data, workspace, id, revalidate]);
+    },[formData, workspace, paramOfMessageFrom, revalidate]);
 
     const onCancel = useCallback(() => {
         setFileCheckModal(false);
         setDragging(false);
     },[]);
 
+    const onCloseModal = useCallback(() => {
+        setFileCheckModal(false);
+    }, []);
+    
     return(
         <Modal show={show} onCloseModal={onCloseModal}>
             <h1>보내는 파일</h1>

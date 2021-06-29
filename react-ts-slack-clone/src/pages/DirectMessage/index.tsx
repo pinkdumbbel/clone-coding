@@ -30,8 +30,7 @@ function DirectMessage() {
     const [chat, onChangeChat, setChat] = inputUser<string, OnChangeHandlerFunc>('');
     const [dragging, setDragging] = useState(false);
     const [fileCheckModal, setFileCheckModal] = useState(false);
-    const [fileData, setFileData] = useState<FormData>();
-    const [fileName, setFileName] = useState('');
+    const [dragEvemt, setDragEvent] = useState<DragEvent<HTMLDivElement>>();
     const [ socket ] = useSocket(workspace);
         
     const isEmpty = chatData?.[0]?.length===0;
@@ -121,35 +120,16 @@ function DirectMessage() {
     }, [dragging])
     
     const onDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault();        
+        e.preventDefault();
+        setDragEvent(e);
         setFileCheckModal(true);
-
-        let data = e.dataTransfer;
-        const formData = new FormData();
-        if(data.items){
-            for(let i = 0; i < data.items.length; i++){
-                if(data.items[i].kind === 'file') {
-                    let file = data.items[i].getAsFile();
-                    file ? formData.append('image', file) : null;
-                    file ? setFileName(file.name) : setFileName('');
-                }
-            }
-        }else{
-            for(let i = 0; i< data.files.length; i++){
-                formData.append('image', data.files[i]);
-            }
-        }
-        setFileData(formData);
-    }, [chatRevalidate, workspace, id])
+        setDragging(false);
+    }, []);
 
     const onDragLeave = ((e: DragEvent<HTMLDivElement>) => {
         if(e.currentTarget.id === 'leave') setDragging(false);
     });
 
-    const onCloseModal = () => {
-        setFileCheckModal(false);
-        setDragging(false);
-    }
     if (!userData || !myData) return null;
 
     return (
@@ -180,12 +160,11 @@ function DirectMessage() {
 
             <FileCheckModal 
                 show={fileCheckModal}
-                onCloseModal={onCloseModal}
                 setFileCheckModal={setFileCheckModal}
                 setDragging={setDragging}
-                data = {fileData}
+                e = {dragEvemt}
                 revalidate = {chatRevalidate}
-                fileName = {fileName}
+                messageFrom = {'dms'}
             />
         </>
     )

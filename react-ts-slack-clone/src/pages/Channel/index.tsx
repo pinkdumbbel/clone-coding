@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Container, Header, DragOver } from './styles';
+import React, { DragEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { Container, Header, DragOver } from '@pages/Channel/styles';
 import ChatList from '@components/ChatList';
 import useSWR, { useSWRInfinite } from 'swr';
 import { useParams } from 'react-router';
@@ -12,6 +12,7 @@ import useSocket from '@hooks/useSocket';
 import axios from 'axios';
 import makeDateSection from '@src/utils/makeDateSection';
 import ChatBox from '@components/ChatBox';
+import FileCheckModal  from '@components/FileCheckModal';
 
 function Channel() {
     const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
@@ -32,6 +33,9 @@ function Channel() {
 
     const scrollbarRef = useRef<Scrollbars>(null);
     const [chat, onChangeChat, setChat] = inputUser<string, OnChangeHandlerFunc>('');
+    const [dragging, setDragging] = useState(false);
+    const [fileCheckModal, setFileCheckModal] = useState(false);
+    const [dragEvent, setDragEvent] = useState<DragEvent<HTMLDivElement>>();
     const [ socket ] = useSocket(workspace);
 
     const isEmpty = chatData?.[0]?.length===0;
@@ -58,27 +62,8 @@ function Channel() {
         }
       }, []);
 
-    useEffect(() => {
-        socket?.on('message', onMessage);
-        return () => {
-            socket?.off('message', onMessage);
-        };
-    },[socket, onMessage])
-
-    //로딩시 스크롤바 제일 아래로
-    useEffect(() => {
-        if(chatData?.length === 1){
-            scrollbarRef.current?.scrollToBottom();
-        }
-    }, [chatData]);
-
-    useEffect(() => {
-        localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
-    }, [workspace, channel])
-
     const onSubmitForm = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         if (chat) {
             chatMutate((prevChatData) => {
                 if(myData && chatData && channelData){
@@ -113,12 +98,48 @@ function Channel() {
         setChat('');
     }, [chat, myData, channelData, chatData, workspace])
 
+    const onDragOver = useCallback((e:DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setDragging(true);
+    }, [])
+
+    const onDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setDragEvent(e);
+        setFileCheckModal(true);
+    }, [workspace, channel]);
+
+    const onDragLeave = ((e: DragEvent<HTMLDivElement>) => {
+        if(e.currentTarget.id === 'leave') setDragging(false);
+    });
+
+    useEffect(() => {
+        socket?.on('message', onMessage);
+        return () => {
+            socket?.off('message', onMessage);
+        };
+    },[socket, onMessage])
+
+    //로딩시 스크롤바 제일 아래로
+    useEffect(() => {
+        if(chatData?.length === 1){
+            scrollbarRef.current?.scrollToBottom();
+        }
+    }, [chatData]);
+
+    useEffect(() => {
+        localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
+    }, [workspace, channel])
+
     const chatDateSection = makeDateSection(chatData ? [...chatData].flat().reverse() : []);
 
     if (!channelData || !myData) return null;
 
     return (
-        <Container>
+        <Container
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+        >
             <Header>
                 <span>#{channel}</span>
                 <div className='header-right'>
@@ -140,7 +161,20 @@ function Channel() {
                 setSize={setSize}
                 isReachingEnd={isReachingEnd}
             />
+            {
+                dragging && 
+                <DragOver id='leave' onDragLeave = {onDragLeave}>업로드!</DragOver>
+            }
             <ChatBox chat={chat} onSubmitForm={onSubmitForm} onChangeChat={onChangeChat} placeholder='' />
+            <FileCheckModal 
+                show={fileCheckModal}
+                setFileCheckModal={setFileCheckModal}
+                setDragging={setDragging}
+                e={dragEvent}
+                revalidate={chatRevalidate}
+                messageFrom={'channels'}
+            />
+
         </Container>
     )
 }

@@ -13,7 +13,8 @@ function EachChannel({channel}: Props) {
 
     const date = localStorage.getItem(`${workspace}-${channel.name}`);
     const location = useLocation();
-    const {data:count, mutate} = useSWR<number>(`/api/workspaces/${workspace}/channels/${channel.name}/unreads?after=${date}`, fetcher);
+    
+    const {data:count, mutate} = useSWR<number>(date ? `/api/workspaces/${workspace}/channels/${channel.name}/unreads?after=${date}` : null, fetcher);
 
     useEffect(() => {
         if (location.pathname === `/workspace/${workspace}/channel/${channel.name}`) {

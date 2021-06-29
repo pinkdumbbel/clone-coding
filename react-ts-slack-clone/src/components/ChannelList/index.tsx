@@ -41,6 +41,7 @@ function ChannelList() {
                     channelData?.map((channel) => {
                         return (
                             <EachChannel 
+                                key={channel.name}
                                 channel={channel}
                             />
                         );
