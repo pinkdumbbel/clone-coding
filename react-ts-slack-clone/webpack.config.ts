@@ -2,7 +2,6 @@ import path from 'path';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import webpack from 'webpack';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -63,9 +62,6 @@ const config: webpack.Configuration = {
   plugins: [
     new ForkTsCheckerWebpackPlugin({ //타입스크립트 검사할경우 blocking형태(검사시에 다음동작 막음) 로 검사 fork설치시 동시에 검사해서 성능향상
       async: false,
-      //eslint: {
-      //  files: "./src/**/*",
-      //},
     }),
     new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? 'development' : 'production' }),//PROCESS_ENV, NODE_ENV를 프론트엔드에서도 접근할수 있도록 해줌
   ],
@@ -94,13 +90,6 @@ const config: webpack.Configuration = {
 if (isDevelopment && config.plugins) {
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
   config.plugins.push(new ReactRefreshWebpackPlugin());
-  //config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'server', openAnalyzer: true }));
 }
-
-//배포시 사용되는 플러그인 
-/* if (!isDevelopment && config.plugins) {
-  config.plugins.push(new webpack.LoaderOptionsPlugin({ minimize: true }));
-  config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static' }));
-} */
 
 export default config;
