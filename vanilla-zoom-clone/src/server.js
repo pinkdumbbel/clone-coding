@@ -1,8 +1,6 @@
-import { Socket } from 'dgram';
-import express, { json } from 'express';
+import express from 'express';
 import http from 'http';
-import WebSocket from 'ws';
-
+import SocketIO from 'socket.io';
 const app = express();
 
 app.set('view engine', "pug");
@@ -13,26 +11,14 @@ app.get('/*', (req, res) => res.redirect('/'));
 //app.listen(3000);
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-const sockets = [];
-wss.on('connection', (socket) => {
-    socket['nickname'] = 'anonymous';
-    sockets.push(socket);
-    console.log('Connected to Browser');
-    //브라우저로부터 요청 받음
-    socket.on('message', (message) => {
-        const parsed = JSON.parse(message);
-        switch (parsed.type) {
-            case 'nickname':
-                socket['nickname'] = parsed.payload;
-                break;
-            case 'message':
-                //브라우저에 응답 보냄
-                sockets.forEach((soc) => soc.send(`${socket.nickname}: ${parsed.payload}`));
-                break;
-        }
+const io = SocketIO(server);
+
+io.on('connection', (socket) => {
+    socket.on('enter_room', ({ payload: roomName }, done) => {
+        socket.join(roomName);
+        done(roomName);
+        socket.to(roomName).emit('welcome', 'someone joined!');
     });
-    socket.on('close', () => console.log('Disconnected to Browser'));
 });
 server.listen(3000);
 console.log('...listening http://localhost:3000/');

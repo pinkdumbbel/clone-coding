@@ -1,43 +1,31 @@
-const messageForm = document.querySelector('#message');
-const nicknameForm = document.querySelector('#nickname');
-const messageList = document.querySelector('ul');
-const socket = new WebSocket(`ws://${window.location.host}`);
+const socket = io();
 
-const dataToJson = (type, payload) => {
-    const sendData = { type, payload };
-    return JSON.stringify(sendData);
+const $welcome = document.querySelector('#welcome');
+const $welcomeForm = $welcome.querySelector('form');
+const $room = document.querySelector('#room');
+
+$room.hidden = true;
+
+const createRoom = (roomName) => {
+    $welcome.hidden = true;
+    $room.hidden = false;
+    const $roomName = document.createElement('h3');
+    $roomName.innerText = `Room: ${roomName}`;
+    $room.prepend($roomName);
 };
 
-//socket.addEventListener 서버로 부터 response받는부분
-socket.addEventListener('open', () => {
-    console.log('Connected to Server!!');
-});
+const welcomeRoom = (message) => {
+    const $ul = document.querySelector('ul');
+    const $li = document.createElement('li');
+    $li.innerText = message;
+    $ul.append($li);
+};
 
-socket.addEventListener('message', (socket) => {
-    console.log(socket.nickname);
-    const messageItem = document.createElement('li');
-    messageItem.innerText = socket.data;
-    messageList.append(messageItem);
-});
-
-socket.addEventListener('close', () => {
-    console.log('Disconnected to Server...');
-});
-
-const sendData = (type, $input) => {
-    socket.send(dataToJson(type, $input.value));
+$welcomeForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const $input = $welcomeForm.querySelector('input');
+    socket.emit('enter_room', { payload: $input.value }, createRoom);
     $input.value = '';
-};
-
-nicknameForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const $input = nicknameForm.querySelector('input');
-    sendData('nickname', $input);
 });
 
-messageForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const $input = messageForm.querySelector('input');
-    sendData('message', $input);
-});
-//서버로 요청보내는 부분socket.onopen = () => socket.send('Hello Server!!!');
+socket.on('welcome', welcomeRoom);
