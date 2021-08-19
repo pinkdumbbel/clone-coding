@@ -12,54 +12,13 @@ app.get('/*', (_, res) => res.redirect('/'));
 
 const server = http.createServer(app);
 const io = SocketIO(server);
-const publicRooms = () => {
-    const { rooms, sids } = io.sockets.adapter;
-    const roomList = [];
-
-    rooms.forEach((_, key) => {
-        if (sids.get(key) === undefined) {
-            roomList.push(key);
-        }
-    });
-
-    return roomList;
-};
-
-const counter = (roomName) => io.sockets.adapter.rooms.get(roomName)?.size;
 
 io.on('connection', (socket) => {
-    socket['nickname'] = 'anonymouse';
-    io.sockets.emit("roomChange", publicRooms());
-
-    socket.on('enter_room', ({ payload: roomName }, done) => {
+    socket.on('EnterRoom', (roomName, done) => {
         socket.join(roomName);
-        done(roomName, counter(roomName));
-        socket.to(roomName).emit('welcome', 'joined!', socket.nickname);
-        socket.to(roomName).emit('counter', roomName, counter(roomName));
-        io.sockets.emit("roomChange", publicRooms());
+        done();
     });
-
-    socket.on('message', (message, roomName, done) => {
-        socket.to(roomName).emit('message', message, socket.nickname);
-        done(message, socket.nickname);
-    });
-
-    socket.on('nickname', nickName => socket['nickname'] = nickName);
-
-    socket.on("disconnecting", () => {
-        socket.rooms.forEach((room) => {
-            socket.to(room).emit('counter', room, counter(room) - 1);
-            socket.to(room).emit('leave', 'left! ㅠㅠ', socket.nickname);
-        });
-    });
-
-    socket.on('disconnect', () => {
-        io.emit('roomChange', publicRooms());
-    });
-
 });
+
 server.listen(3000);
 console.log('...listening http://localhost:3000/');
-
-
-
