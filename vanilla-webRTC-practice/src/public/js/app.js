@@ -4,7 +4,7 @@ const $myFace = document.querySelector('#myFace');
 const $peerFace = document.querySelector('#peerFace');
 
 const $muteBtn = document.querySelector('#mute');
-const $cameraOffBtn = document.querySelector('#cameraOff');
+const $cameraOffBtn = document.querySelector('#camera');
 
 const $camerasSelect = document.querySelector('#cameras');
 
@@ -14,10 +14,10 @@ const $call = document.querySelector('#call');
 const $enterRoomForm = $welcome.querySelector('form');
 
 $call.hidden = true;
+
 let mute = false;
 let cameraOff = false;
 let myStream;
-let peerStream;
 let roomName;
 let myPeerConnection;
 
@@ -40,8 +40,8 @@ let myPeerConnection;
 const getMedia = async () => {
     try {
         myStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
             audio: true,
+            video: { facingMode: "user" },
         });
         $myFace.srcObject = myStream;
         //await getCameras();
@@ -52,15 +52,25 @@ const getMedia = async () => {
 
 //RTC PEER
 const makeConnection = () => {
-    myPeerConnection = new RTCPeerConnection();
-    myPeerConnection.addEventListener('icecandidate', (icecandidate) => {
-        socket.emit('icecandidate', icecandidate, roomName);
+    myPeerConnection = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: [
+                    "stun:stun.l.google.com:19302",
+                    "stun:stun1.l.google.com:19302",
+                    "stun:stun2.l.google.com:19302",
+                    "stun:stun3.l.google.com:19302",
+                    "stun:stun4.l.google.com:19302",
+                ],
+            },
+        ],
+    });
+    myPeerConnection.addEventListener('icecandidate', (data) => {
+        socket.emit('icecandidate', data.candidate, roomName);
     });
     myPeerConnection.addEventListener('addstream', (data) => {
-        console.log($peerFace.srcObject);
-        peerStream = data.stream;
-        console.log($myFace.srcObject);
-        console.log($peerFace.srcObject);
+        $peerFace.srcObject = data.stream;
+        console.log(data.stream);
     });
     myStream
         .getTracks()
@@ -68,6 +78,7 @@ const makeConnection = () => {
 };
 
 const initCall = async () => {
+    console.log('init');
     $call.hidden = false;
     $welcome.hidden = true;
     await getMedia();
