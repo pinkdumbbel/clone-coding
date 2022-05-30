@@ -40,7 +40,7 @@ function ChannelList() {
                 {!channelCollapse &&
                     channelData?.map((channel) => {
                         return (
-                            <EachChannel 
+                            <EachChannel
                                 key={channel.name}
                                 channel={channel}
                             />
