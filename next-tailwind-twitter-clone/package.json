@@ -11,9 +11,11 @@
     "@sanity/image-url": "^1.0.1",
     "javascript-time-ago": "^2.5.4",
     "next": "latest",
+    "next-auth": "^4.3.4",
     "next-sanity": "^0.5.2",
     "react": "18.1.0",
     "react-dom": "18.1.0",
+    "react-hot-toast": "^2.2.0",
     "react-time-ago": "^7.2.1",
     "react-twitter-embed": "^4.0.4"
   },

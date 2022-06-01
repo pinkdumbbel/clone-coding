@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Comment, Tweet } from '../type';
 import ReactTimeAgo from 'react-time-ago';
 import {
@@ -8,6 +8,7 @@ import {
   UploadIcon,
 } from '@heroicons/react/outline';
 import fetchComment from '../api/fetchComment';
+import CommentComponent from './Comment';
 interface TweetProps {
   tweet: Tweet;
 }
@@ -23,7 +24,6 @@ function Tweet({ tweet }: TweetProps) {
     refreshComment();
   }, []);
 
-  console.log(comments);
   return (
     <div className="flex flex-col space-x-3 border-y p-5 border-gray-100">
       <div className="flex space-x-3">
@@ -75,6 +75,8 @@ function Tweet({ tweet }: TweetProps) {
           <UploadIcon className="w-5 h-5" />
         </div>
       </div>
+
+      <CommentComponent comments={comments} />
     </div>
   );
 }

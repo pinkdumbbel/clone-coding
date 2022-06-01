@@ -1,6 +1,7 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+import { Toaster } from 'react-hot-toast';
 import { fetchTweets } from '../api/fetchTweets';
 import Feed from '../components/Feed';
 import SideBar from '../components/SideBar';
@@ -23,6 +24,8 @@ const Home: NextPage<Props> = ({ tweets }) => {
         <Feed tweets={tweets} />
         <Widgets />
       </main>
+
+      <Toaster />
     </div>
   );
 };
