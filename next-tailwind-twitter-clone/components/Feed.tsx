@@ -24,7 +24,7 @@ function Feed({ tweets: tweetsProps }: FeedProps) {
   };
 
   return (
-    <div className="col-span-7 lg:col-span-5">
+    <div className="col-span-7 lg:col-span-5 overflow-y-scroll max-h-screen scrollbar-hide">
       <div className="flex items-center justify-between">
         <h1 className="p-5 pb-0">Home</h1>
         <RefreshIcon
@@ -33,7 +33,7 @@ function Feed({ tweets: tweetsProps }: FeedProps) {
         />
       </div>
 
-      <TweetBox />
+      <TweetBox setTweets={setTweets} />
 
       {/* Feed */}
       <div>

@@ -8,7 +8,7 @@ interface CommentProps {
 
 function Comment({ comments }: CommentProps) {
   return (
-    <div className="my-2 mt-5 max-h-44 space-y-5 border-t border-gray-100 p-5 overflow-y-scroll">
+    <div className="my-2 mt-5 max-h-44 space-y-5 border-t border-gray-100 p-5 overflow-y-scroll scrollbar-hide">
       {comments.length > 0 &&
         comments.map((comment) => (
           <div key={comment._id}>

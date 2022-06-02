@@ -7,8 +7,15 @@ import {
 } from '@heroicons/react/outline';
 import { useSession } from 'next-auth/react';
 import React, { MouseEvent, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { fetchTweets } from '../api/fetchTweets';
+import { Tweet, TweetBody } from '../type';
 
-function TweetBox() {
+interface TweetBoxProps {
+  setTweets: (tweets: Tweet[]) => void;
+}
+
+function TweetBox({ setTweets }: TweetBoxProps) {
   const [input, setInput] = useState<string>('');
   const [imageUrlBoxIsOpen, setImageUrlBoxIsOpen] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>('');
@@ -26,6 +33,42 @@ function TweetBox() {
     imageInputRef.current.value = '';
     setImageUrlBoxIsOpen(false);
   };
+
+  const postTweet = async () => {
+    const tweet: TweetBody = {
+      profileImg: session?.user?.image || 'https://links.papareact.com/gll',
+      text: input,
+      userName: session?.user?.name || 'Unknown User',
+      image: imageUrl,
+    };
+
+    const res = await fetch('/api/addTweet', {
+      body: JSON.stringify(tweet),
+      method: 'POST',
+    });
+
+    const json = await res.json();
+
+    const newTweets = await fetchTweets();
+
+    setTweets(newTweets);
+
+    toast.success('Added Tweet!!', {
+      icon: '🚀',
+    });
+    return json;
+  };
+
+  const addTweet = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    postTweet();
+
+    setInput('');
+    setImageUrlBoxIsOpen(false);
+    setImageUrl('');
+  };
+
   return (
     <div className="flex space-x-2 p-5">
       <img
@@ -57,13 +100,14 @@ function TweetBox() {
             <button
               className="bg-twitter rounded-full font-bold text-white py-3 px-5 disabled:opacity-40"
               disabled={!input || !session}
+              onClick={addTweet}
             >
               Tweet
             </button>
           </div>
 
           {imageUrlBoxIsOpen && (
-            <form className="mt-5 flex rounded-lg bg-twitter/80 py-2 px-4">
+            <div className="mt-5 flex rounded-lg bg-twitter/80 py-2 px-4">
               <input
                 ref={imageInputRef}
                 type="text"
@@ -73,7 +117,7 @@ function TweetBox() {
               <button className="font-bold text-white" onClick={addImage}>
                 Add Image
               </button>
-            </form>
+            </div>
           )}
 
           {imageUrl && (
